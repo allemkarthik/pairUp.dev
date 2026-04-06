@@ -4,16 +4,34 @@ const express=require("express")
 
 const app=express()
 
-app.use("/test",(req,res)=>{
-    res.send("hello from the test")
+// this will only handle get call
+app.get("/test",(req,res)=>{
+    res.send({firstname:"karthik",lastname:"allem"})
 })
-// reauest handler
+
+// patch
+app.patch("/patch",(req,res)=>{
+    res.send("patch is done")
+})
+
+// put  
+
+app.put("/put",(req,res)=>{
+    res.send("put method")
+})
+
+// delete
+app.delete("/delete",(req,res)=>{
+    res.send("delete method")
+})
+
+// post
+app.use("/post",(req,res)=>{
+    res.send("data saved successfully in database")
+})
+// it will match all the http methods api calls
 app.use("/hello",(req,res)=>{
     res.send("hello from the hello")
-})
-// reauest handler
-app.use("/profile",(req,res)=>{
-    res.send("hello from the profile.......")
 })
 
 
