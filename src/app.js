@@ -4,18 +4,23 @@ const express = require("express");
 
 const app = express();
 
-app.use(
-  "/user",
-  (req, res,next) => {
-    console.log("1 st console")
-    next()
-    res.send("1st response");
-  },
-  (req,res) => {
-    console.log("2nd console")
-    res.send("2nd response")
-  },
-);
+const {adminAuth}=require("./middleware/auth")
+
+app.use("/admin",adminAuth)
+
+app.get("/admin/getadminalldata",(req,res)=>{
+    res.send("all daata send")
+
+})
+
+
+app.get("/deleteuser",(req,res)=>{
+    res.send("user deleted")
+
+})
+
+
+
 
 // server listener
 app.listen(3000, () => {
