@@ -3,14 +3,21 @@
 const express = require("express");
 
 const app = express();
+app.get("/getuserdata",(req,res)=>{
+    try{
+        throw new Error("sdgafgs")
+        res.send("user data sent")
+    }
+    catch(err){
+        res.status(500).send("contact support team")
+    }
+})
 
-const {adminAuth}=require("./middleware/auth")
-
-app.use("/admin",adminAuth)
-
-app.get("/admin/getadminalldata",(req,res)=>{
-    res.send("all daata send")
-
+// error handling
+app.use("/",(err,req,res,next)=>{
+    if(err){
+        res.send("something went wrong")
+    }
 })
 
 
