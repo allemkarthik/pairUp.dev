@@ -6,17 +6,14 @@ const app = express();
 const connectDB = require("./config/database");
 const User = require("./models/user");
 
+// middle for reading the json
+app.use(express.json())
+
 // create a post signup api
 
 app.post("/signup", async (req, res) => {
-  const user = new User({
-    firstName: "karthik",
-    lastName: "allem",
-    emailID: "allemkarthik@gmail.com",
-    password: "Allem@12345",
-    age: 23,
-    gender: "male",
-  });
+  
+  const user = new User(req.body);
 
   try{
     await user.save();
