@@ -5,19 +5,25 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
 const User = require("./models/user");
+const { validateSignUpData } = require("./utils/validation");
 
 // middle for reading the json
 app.use(express.json());
 
 // create a post signup api
 app.post("/signup", async (req, res) => {
-  const user = new User(req.body);
-
   try {
+    // validate the user data
+    validateSignUpData(req);
+    // encrypt user password
+
+    // store the user data in db
+    const user = new User(req.body);
+
     await user.save();
     res.send("user created successfull");
   } catch (err) {
-    res.status(400).send("Error saving user:" + err.message);
+    res.status(400).send("ERROR :" + err.message);
   }
 });
 
@@ -64,7 +70,6 @@ app.patch("/user/:userId", async (req, res) => {
   const userId = req.params?.userId;
   const data = req.body;
 
-  
   try {
     // api validation
     const UpdatesAllowed = [
@@ -82,8 +87,8 @@ app.patch("/user/:userId", async (req, res) => {
     if (!isallowed) {
       throw new Error(" update not allowed");
     }
-    if(data?.skills.length>10){
-      throw new Error("can't be more than 10 skills")
+    if (data?.skills.length > 10) {
+      throw new Error("can't be more than 10 skills");
     }
     const user = await User.findByIdAndUpdate({ _id: userId }, data, {
       runValidators: true,
