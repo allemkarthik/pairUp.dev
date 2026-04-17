@@ -60,11 +60,32 @@ app.delete("/user", async (req, res) => {
 });
 
 // update the user data in database
-app.patch("/user", async(req, res) => {
+app.patch("/user", async (req, res) => {
   const userId = req.body.userId;
   const data = req.body;
+
+  
   try {
-    const user =await User.findByIdAndUpdate({ _id: userId }, data);
+    // api validation
+    const UpdatesAllowed = [
+      "userId",
+      "firstName",
+      "lastName",
+      "password",
+      "gender",
+      "skills",
+      "photoUrl",
+      "about",
+    ];
+    const isallowed = Object.keys(data).every((k) =>
+      UpdatesAllowed.includes(k),
+    );
+    if (!isallowed) {
+      throw new Error(" update not allowed");
+    }
+    const user = await User.findByIdAndUpdate({ _id: userId }, data, {
+      runValidators: true,
+    });
     res.send("user update sucessfully");
   } catch (err) {
     res.status(400).send("can't update user" + err.message);
