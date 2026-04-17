@@ -36,6 +36,30 @@ app.post("/signup", async (req, res) => {
   }
 });
 
+// create a login APi
+app.post("/login", async (req,res)=>{
+  try{
+    const {emailID, password}=req.body
+
+    const user=await User.findOne({emailID:emailID})
+    if(!user){
+      throw new Error(" Seems New user! please Signup")
+    }
+
+    const isPasswordValid= await bcrypt.compare(password, user.password)
+    
+    
+    if(isPasswordValid){
+      res.send("login Successfull")
+    }else{
+      throw new Error("Incorrect credentials....")
+    }
+  }catch(err){
+    res.status(400).send("ERROR :" +err.message)
+  }
+
+})
+
 // get user by email
 app.get("/user", async (req, res) => {
   const userEmail = req.body.emailID;
