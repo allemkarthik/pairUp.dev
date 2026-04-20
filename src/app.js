@@ -49,7 +49,13 @@ app.post("/login", async (req,res)=>{
     const isPasswordValid= await bcrypt.compare(password, user.password)
     
     
-    if(isPasswordValid){
+    if(isPasswordValid && user){
+      // create a JWT token
+
+
+      //add the token to cookie and send the response to the user
+
+      res.cookie("token","jsfdvbwiuoasledkjsaiowed");
       res.send("login Successfull")
     }else{
       throw new Error("Incorrect credentials....")
@@ -58,6 +64,13 @@ app.post("/login", async (req,res)=>{
     res.status(400).send("ERROR :" +err.message)
   }
 
+})
+
+// create a profile api
+app.get("/profile", async (req, res)=>{
+  const cookies=req.cookies;
+  console.log(cookies)
+  res.send("cookie reading")
 })
 
 // get user by email
