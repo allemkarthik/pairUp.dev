@@ -7,9 +7,13 @@ const connectDB = require("./config/database");
 const User = require("./models/user");
 const { validateSignUpData } = require("./utils/validation");
 const bcrypt = require("bcrypt");
+const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 
-// middle for reading the json
+// middleware for reading the json
 app.use(express.json());
+// middleware for reading the cookie
+app.use(cookieParser());
 
 // create a post signup api
 app.post("/signup", async (req, res) => {
@@ -37,41 +41,52 @@ app.post("/signup", async (req, res) => {
 });
 
 // create a login APi
-app.post("/login", async (req,res)=>{
-  try{
-    const {emailID, password}=req.body
+app.post("/login", async (req, res) => {
+  try {
+    const { emailID, password } = req.body;
 
-    const user=await User.findOne({emailID:emailID})
-    if(!user){
-      throw new Error(" Seems New user! please Signup")
+    const user = await User.findOne({ emailID: emailID });
+    if (!user) {
+      throw new Error(" Seems New user! please Signup");
     }
 
-    const isPasswordValid= await bcrypt.compare(password, user.password)
-    
-    
-    if(isPasswordValid && user){
-      // create a JWT token
+    const isPasswordValid = await bcrypt.compare(password, user.password);
 
+    if (isPasswordValid && user) {
+      // create a JWT token
+      const token = await jwt.sign({ _id: user._id }, "PairUp@dev$4275");
 
       //add the token to cookie and send the response to the user
-
-      res.cookie("token","jsfdvbwiuoasledkjsaiowed");
-      res.send("login Successfull")
-    }else{
-      throw new Error("Incorrect credentials....")
+      res.cookie("token", token);
+      res.send("login Successfull");
+    } else {
+      throw new Error("Incorrect credentials....");
     }
-  }catch(err){
-    res.status(400).send("ERROR :" +err.message)
+  } catch (err) {
+    res.status(400).send("ERROR :" + err.message);
   }
-
-})
+});
 
 // create a profile api
-app.get("/profile", async (req, res)=>{
-  const cookies=req.cookies;
-  console.log(cookies)
-  res.send("cookie reading")
-})
+app.get("/profile", async (req, res) => {
+  try {
+    const cookies = req.cookies;
+    const { token } = cookies;
+    // validate token
+    if (!token) {
+      throw new Error("Invalid token");
+    }
+    const isvalidToken = await jwt.verify(token, "PairUp@dev$4275");
+   
+    const { _id } = isvalidToken;
+    const user = await User.findById(_id);
+    if (!user) throw new Error("User not found! please login");
+
+    res.send(user);
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+});
 
 // get user by email
 app.get("/user", async (req, res) => {
