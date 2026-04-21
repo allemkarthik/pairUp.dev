@@ -1,13 +1,32 @@
-const adminAuth=(req,res,next)=>{
-    const token="xyz"
-    const isadminAuth= token==="xyz";
-    if(!isadminAuth){
-        res.status(401).send("user not authourized")
-    }else{
-        next()
-    }
-}
+const jwt = require("jsonwebtoken");
+const User = require("../models/user");
 
-module.exports={
-    adminAuth,
-}
+const userAuth = async (req, res, next) => {
+  try {
+    // read the token from request cookies
+    const cookies = req.cookies;
+
+    const { token } = cookies;
+    if(!token){
+        throw new Error("seems logged out!! please login again OR Sign up")
+    }
+
+    // validate token
+    const isvalidToken = await jwt.verify(token, "PairUp@dev$4275");
+
+    // find user
+    const { _id } = isvalidToken;
+    const user = await User.findById(_id);
+    if (!user) {
+      throw new Error("seems New user! please login...");
+    }
+    req.user=user
+    next();
+  } catch (err) {
+    res.status(400).send("ERROR: " + err.message);
+  }
+};
+
+module.exports = {
+  userAuth,
+};
