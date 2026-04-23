@@ -16,6 +16,10 @@ const authRouter=require("./routes/auth");
 const profileRouter=require("./routes/profile");
 const sendConnectionRequest=require("./routes/connectionRequests");
 
+app.use("/",authRouter)
+app.use("/",profileRouter)
+app.use("/",sendConnectionRequest)
+
 
 connectDB()
   .then(() => {
