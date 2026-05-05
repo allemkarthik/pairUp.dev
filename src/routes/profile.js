@@ -41,7 +41,7 @@ profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
 
 
 // create a forgot password api
-profileRouter.patch("/profile/passwordchange", userAuth, async (req,res)=>{
+profileRouter.patch("/profile/reset-password", userAuth, async (req,res)=>{
   try{
     const user=req.user
     const {oldPassword, newPassword}=req.body
