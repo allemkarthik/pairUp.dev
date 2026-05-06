@@ -14,7 +14,7 @@ app.use(cookieParser());
 
 const authRouter=require("./routes/auth");
 const profileRouter=require("./routes/profile");
-const sendConnectionRequest=require("./routes/connectionRequests");
+const sendConnectionRequest=require("./routes/requests");
 
 app.use("/",authRouter)
 app.use("/",profileRouter)
