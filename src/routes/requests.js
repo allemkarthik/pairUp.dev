@@ -25,8 +25,8 @@ requestRouter.post(
       }
 
       // to user itself connection request
-
       
+
 
       //   check for user not available in db
       const toUser = await User.findById(toUserId);
@@ -54,7 +54,7 @@ requestRouter.post(
       });
       const data = await connectionRequest.save();
       res.json({
-        message: "Connection request sent",
+        message: req.user.firstName + " is "+ status + " in "+ toUser.firstName,
         data,
       });
     } catch (err) {
