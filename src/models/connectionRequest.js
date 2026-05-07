@@ -24,6 +24,11 @@ const connectionrequestSchema = new mongoose.Schema(
   },
 );
 
+// compound indexs
+connectionrequestSchema.index({fromUserId:1, toUserId:1});
+
+
+// pre middleware to itslef connections
 connectionrequestSchema.pre("save", function (next) {
   const connectionRequest = this;
   //check if fromuserid is same as touserid
