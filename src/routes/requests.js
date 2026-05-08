@@ -1,7 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../middleware/auth");
 const ConnectionRequestModel = require("../models/connectionRequest");
-const User=require("../models/user")
+const User = require("../models/user");
 
 const requestRouter = express.Router();
 
@@ -25,8 +25,6 @@ requestRouter.post(
       }
 
       // to user itself connection request
-      
-
 
       //   check for user not available in db
       const toUser = await User.findById(toUserId);
@@ -54,11 +52,53 @@ requestRouter.post(
       });
       const data = await connectionRequest.save();
       res.json({
-        message: req.user.firstName + " is "+ status + " in "+ toUser.firstName,
+        message:
+          req.user.firstName + " is " + status + " in " + toUser.firstName,
         data,
       });
     } catch (err) {
       res.status(400).send("ERROR: " + err.message);
+    }
+  },
+);
+
+// request review api
+
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const { status, requestId } = req.params;
+      const loggedInUser = req.user;
+
+      // validate the status
+      isAllowedStatus = ["accepted", "rejected"];
+      if (!isAllowedStatus.includes(status)) {
+        return res.status(400).json({ message: "status not allowed: " });
+      }
+
+      const connectionRequest = await ConnectionRequestModel.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+
+      if (!connectionRequest) {
+        return res
+          .status(404)
+          .json({ message: "connection request not found" });
+      }
+
+      connectionRequest.status=status;
+
+      const data= await connectionRequest.save()
+
+      res.json({message: "connection request "+status, data})
+
+      //
+    } catch (err) {
+      res.status(400).send("ERROR : " + err.message);
     }
   },
 );
