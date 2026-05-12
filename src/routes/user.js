@@ -1,6 +1,7 @@
 const express = require("express");
 const { userAuth } = require("../middleware/auth");
 const ConnectionRequestModel = require("../models/connectionRequest");
+const User = require("../models/user");
 
 const userRouter = express.Router();
 
@@ -35,20 +36,66 @@ userRouter.get("/user/connections", userAuth, async (req, res) => {
         { toUserId: logginUser._id, status: "accepted" },
         { fromUserId: logginUser._id, status: "accepted" },
       ],
-    }).populate("fromUserId", [
-      "firstName",
-      "lastName",
-      "photoUrl",
-      "skills",
-      "about",
-    ]);
+    })
+      .populate("fromUserId", [
+        "firstName",
+        "lastName",
+        "photoUrl",
+        "skills",
+        "about",
+      ])
+      .populate("toUserId", [
+        "firstName",
+        "lastName",
+        "photoUrl",
+        "skills",
+        "about",
+      ]);
 
     // only fetch user data
-    const data=connectionRequests.map((every)=>every.fromUserId);
+    const data = connectionRequests.map((every) => {
+      if (every.fromUserId._id.toString() === logginUser._id.toString()) {
+        return every.toUserId;
+      }
+      return every.fromUserId;
+    });
 
-    res.json({ data});
+    res.json({ data });
   } catch (err) {
     res.status(400).send({ message: err.message });
+  }
+});
+
+// feed api
+userRouter.get("/feed", userAuth, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+
+    // find all connection requests (send and recevied)
+    const connectionRequests = await ConnectionRequestModel.find({
+      $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
+    })
+      .select("fromUserId toUserId")
+      
+
+    //   hide user => user=> connections , recevied connections, sended connections, already friends
+    const hideUsersFromFeed = new Set();
+    connectionRequests.forEach((request) => {
+      hideUsersFromFeed.add(request.fromUserId.toString());
+      hideUsersFromFeed.add(request.toUserId.toString());
+    });
+   
+
+    const users = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(hideUsersFromFeed) } },
+        { _id: { $ne: loggedInUser._id } },
+      ],
+    }).select("firstName lastName emailId photoUrl skills about age gender");
+
+    res.json({data:users});
+  } catch (err) {
+    res.status(400).json({ message: err.message });
   }
 });
 module.exports = userRouter;

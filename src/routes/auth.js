@@ -26,7 +26,7 @@ authRouter.post("/signup", async (req, res) => {
     await user.save();
     res.send("user created successfull");
   } catch (err) {
-    res.status(400).send("ERROR :" + err.message);
+    res.status(401).send("ERROR :" + err.message);
   }
 });
 
@@ -55,7 +55,7 @@ authRouter.post("/login", async (req, res) => {
       throw new Error("Incorrect credentials....");
     }
   } catch (err) {
-    res.status(400).send("ERROR :" + err.message);
+    res.status(401).send("ERROR :" + err.message);
   }
 });
 
