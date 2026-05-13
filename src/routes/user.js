@@ -71,12 +71,16 @@ userRouter.get("/feed", userAuth, async (req, res) => {
   try {
     const loggedInUser = req.user;
 
+    //pagination
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 50 ? 50 : limit;
+    const skip = (page - 1) * limit;
+
     // find all connection requests (send and recevied)
     const connectionRequests = await ConnectionRequestModel.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
-    })
-      .select("fromUserId toUserId")
-      
+    }).select("fromUserId toUserId");
 
     //   hide user => user=> connections , recevied connections, sended connections, already friends
     const hideUsersFromFeed = new Set();
@@ -84,16 +88,18 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       hideUsersFromFeed.add(request.fromUserId.toString());
       hideUsersFromFeed.add(request.toUserId.toString());
     });
-   
 
     const users = await User.find({
       $and: [
         { _id: { $nin: Array.from(hideUsersFromFeed) } },
         { _id: { $ne: loggedInUser._id } },
       ],
-    }).select("firstName lastName emailId photoUrl skills about age gender");
+    })
+      .select("firstName lastName emailId photoUrl skills about age gender")
+      .skip(skip)
+      .limit(limit);
 
-    res.json({data:users});
+    res.json({ data: users });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
