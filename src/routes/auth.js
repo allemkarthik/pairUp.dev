@@ -50,7 +50,7 @@ authRouter.post("/login", async (req, res) => {
       res.cookie("token", token, {
         expires: new Date(Date.now() + 24 * 3600000), //experies in 24hrs
       });
-      res.send("login Successfull");
+      res.send(user);
     } else {
       throw new Error("Incorrect credentials....");
     }

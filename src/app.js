@@ -4,6 +4,10 @@ const express = require("express");
 const app = express();
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
+const cors=require("cors")
+
+// middleware for cors error
+app.use(cors());
 
 // middleware for reading the json
 app.use(express.json());
