@@ -8,7 +8,7 @@ const userAuth = async (req, res, next) => {
 
     const { token } = cookies;
     if(!token){
-        throw new Error("seems logged out!! please login again OR Sign up")
+        return res.status(401).send("please login")
     }
 
     // validate token
