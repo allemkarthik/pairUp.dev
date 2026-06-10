@@ -1,9 +1,9 @@
-const express=require("express")
+const express = require("express");
 const { validateSignUpData } = require("../utils/validation");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
 
-const authRouter=express.Router();
+const authRouter = express.Router();
 
 // create a post signup api
 authRouter.post("/signup", async (req, res) => {
@@ -23,16 +23,23 @@ authRouter.post("/signup", async (req, res) => {
       password: passwordHash,
     });
 
-    const userSaved=await user.save();
+    const userSaved = await user.save();
     // create a JWT token
-      const token = await userSaved.getJWT();
+    const token = await userSaved.getJWT();
 
-      //add the token to cookie and send the response to the user
-      res.cookie("token", token, {
-        expires: new Date(Date.now() + 24 * 3600000), //experies in 24hrs
-      });
+    //add the token to cookie and send the response to the user
+    res.cookie("token", token, {
+      expires: new Date(Date.now() + 24 * 3600000), //experies in 24hrs
+    });
 
-    res.json({message:"User Created successfully", data: userSaved});
+    //do not sending hashed password to console
+    const userResponse = userSaved.toObject();
+    delete userResponse.password;
+
+    res.json({
+      message: "User Created successfully",
+      data: userResponse,
+    });
   } catch (err) {
     res.status(401).send("ERROR :" + err.message);
   }
@@ -48,7 +55,7 @@ authRouter.post("/login", async (req, res) => {
       throw new Error(" Seems New user! please Signup");
     }
 
-    const isPasswordValid = await user.validatePassword(password)
+    const isPasswordValid = await user.validatePassword(password);
 
     if (isPasswordValid && user) {
       // create a JWT token
@@ -69,12 +76,11 @@ authRouter.post("/login", async (req, res) => {
 
 // create a logout APi
 
-authRouter.post("/logout" , async (req,res)=>{
-    res.cookie("token",null,{
-        expires: new Date(Date.now())
-    })
-    res.send("loggout successfull")
-})
+authRouter.post("/logout", async (req, res) => {
+  res.cookie("token", null, {
+    expires: new Date(Date.now()),
+  });
+  res.send("loggout successfull");
+});
 
-
-module.exports=authRouter;
+module.exports = authRouter;
