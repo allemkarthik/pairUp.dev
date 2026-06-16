@@ -96,10 +96,11 @@ userRouter.get("/feed", userAuth, async (req, res) => {
       ],
     })
       .select("firstName lastName emailId photoUrl skills about age gender")
+      .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    res.json({ data: users });
+    res.json({ data: users, page, hasMore: users.length === limit });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
