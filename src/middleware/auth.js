@@ -13,7 +13,7 @@ const userAuth = async (req, res, next) => {
     }
 
     // validate token
-    const isvalidToken = await jwt.verify(token, "PairUp@dev$4275");
+    const isvalidToken = await jwt.verify(token, process.env.JWT_SECRET);
 
     // find user
     const { _id } = isvalidToken;
