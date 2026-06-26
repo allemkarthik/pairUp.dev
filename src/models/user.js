@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema(
     },
     gender: {
       type: String,
+      required:true,
       enum:{
         values:["male","female","others"],
         message:`{VALUE} is not a valid gender type`
@@ -54,6 +55,7 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
+      required:true,
       default:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD116U9ZCk8bEaanCeB5rSCC2uqY5Ka_2_EA&s",
       validate(value) {
@@ -64,9 +66,11 @@ const userSchema = new mongoose.Schema(
     },
     about: {
       type: String,
+      required:true,
     },
     skills: {
       type: [String],
+      required:true,
     },
   },
   {

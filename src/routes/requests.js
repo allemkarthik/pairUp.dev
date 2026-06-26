@@ -53,8 +53,8 @@ requestRouter.post(
       });
       const data = await connectionRequest.save();
 
-      const email= await sendEmail.run()
-      console.log(email)
+      // const email= await sendEmail.run()
+      // console.log(email)
       res.json({
         message:
           req.user.firstName + " is " + status + " in " + toUser.firstName,
