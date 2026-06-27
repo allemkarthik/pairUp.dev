@@ -1,33 +1,38 @@
 const { SendEmailCommand } = require("@aws-sdk/client-ses");
 const { sesClient } = require("./sesClient");
 
-const createSendEmailCommand = (toAddress) => {
+const createSendEmailCommand = (toEmailId, subject, htmlBody, textBody) => {
   return new SendEmailCommand({
     Destination: {
-      ToAddresses: [toAddress],
+      ToAddresses: [toEmailId],
     },
     Message: {
       Body: {
         Html: {
           Charset: "UTF-8",
-          Data: "<h1>Welcome to PairUpDev</h1>",
+          Data: htmlBody,
         },
         Text: {
           Charset: "UTF-8",
-          Data: "Welcome to PairUpDev",
+          Data: textBody,
         },
       },
       Subject: {
         Charset: "UTF-8",
-        Data: "PairUpDev Notification",
+        Data: subject,
       },
     },
-    Source: "no-reply@pairupdev.com",
+    Source:  process.env.AWS_SES_FROM_EMAIL,
   });
 };
 
-const run = async () => {
-  const command = createSendEmailCommand("karthikallem7@gmail.com");
+const run = async (toEmailId, subject, htmlBody, textBody) => {
+  const command = createSendEmailCommand(
+    "allemkarthik@gmail.com",
+    subject,
+    htmlBody,
+    textBody
+  );
 
   try {
     return await sesClient.send(command);
