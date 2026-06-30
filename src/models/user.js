@@ -3,13 +3,11 @@ const validator = require("validator");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
 const userSchema = new mongoose.Schema(
   {
     firstName: {
       type: String,
       required: true,
-      
     },
     lastName: {
       type: String,
@@ -36,16 +34,16 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
-    age: {
-      type: Number,
-      min: 18,
+    dateOfBirth: {
+      type: Date,
+      required: true,
     },
     gender: {
       type: String,
-      
-      enum:{
-        values:["male","female","others"],
-        message:`{VALUE} is not a valid gender type`
+
+      enum: {
+        values: ["male", "female", "others"],
+        message: `{VALUE} is not a valid gender type`,
       },
       validate(value) {
         if (!["male", "female", "others"].includes(value)) {
@@ -55,7 +53,7 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
-      
+
       default:
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQD116U9ZCk8bEaanCeB5rSCC2uqY5Ka_2_EA&s",
       validate(value) {
@@ -66,11 +64,9 @@ const userSchema = new mongoose.Schema(
     },
     about: {
       type: String,
-      
     },
     skills: {
       type: [String],
-      
     },
   },
   {
@@ -79,7 +75,7 @@ const userSchema = new mongoose.Schema(
 );
 
 //compund index
-userSchema.index({firstName:1, lastName:1});
+userSchema.index({ firstName: 1, lastName: 1 });
 
 // create a JWT token Method
 userSchema.methods.getJWT = async function () {

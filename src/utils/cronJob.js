@@ -54,3 +54,57 @@ cron.schedule("00 8 * * *", async () => {
   }
 });
 
+//job sending email for birthday
+
+cron.schedule("00 9 * * *", async()=>{
+  try{
+    const today= new Date();
+    const todayDate= today.getDay();
+    const todayMonth= today.getMonth();
+
+    const users= await User.aggregate([
+      {
+        //get users who have DOB
+        $match: {
+          dataOfBirth : {$exists: true}
+        }
+      },
+      {
+        $match:{
+          $expr:{
+            $and:[
+              ///finding users whoes birthday is equal to todays date and month also
+              { $eq: [{ $dayOfMonth: "$dateOfBirth" }, todayDate] },
+              { $eq: [{ $month: "$dateOfBirth" }, todayMonth] }
+            ]
+          }
+        }
+      }
+    ]);
+
+    for(const user of users){
+      try {
+        await run(
+          user.emailID,
+          "🎉 Happy Birthday from PairUpDev!",
+          `
+            <div style="font-family: Arial;">
+              <h2>🎂 Happy Birthday ${user.firstName}!</h2>
+              <p>Wishing you an amazing year ahead 🚀</p>
+              <p>— Team PairUpDev</p>
+            </div>
+          `,
+          `Happy Birthday ${user.firstName}! Wishing you a great year ahead.`
+        );
+
+        console.log(`Birthday email sent to ${user.emailId}`);
+      } catch (err) {
+        console.error("Email send failed:", err.message);
+      }
+    }
+    
+
+  }catch(err){
+    console.error("Cron Job Error:", err);
+  }
+})

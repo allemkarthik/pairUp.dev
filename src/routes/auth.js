@@ -13,7 +13,7 @@ authRouter.post("/signup", async (req, res) => {
     validateSignUpData(req);
 
     // encrypt user password
-    const { firstName, lastName, emailID, password } = req.body;
+    const { firstName, lastName, emailID, password,dateOfBirth  } = req.body;
     const passwordHash = await bcrypt.hash(password, 10);
 
     // store the user data in db
@@ -22,6 +22,7 @@ authRouter.post("/signup", async (req, res) => {
       lastName,
       emailID,
       password: passwordHash,
+      dateOfBirth,
     });
 
     const userSaved = await user.save();
@@ -35,7 +36,7 @@ authRouter.post("/signup", async (req, res) => {
 
     // send welocome email to user
     await run({
-      toEmailId: userSaved.emailId,
+      toEmailId: userSaved.emailID,
       subject: "Welcome to PairUpDev 🚀",
       htmlBody: `
     <div style="font-family: Arial;">
