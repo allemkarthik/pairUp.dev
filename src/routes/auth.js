@@ -2,6 +2,7 @@ const express = require("express");
 const { validateSignUpData } = require("../utils/validation");
 const bcrypt = require("bcrypt");
 const User = require("../models/user");
+const { run } = require("../utils/sendEmail");
 
 const authRouter = express.Router();
 
@@ -30,6 +31,44 @@ authRouter.post("/signup", async (req, res) => {
     //add the token to cookie and send the response to the user
     res.cookie("token", token, {
       expires: new Date(Date.now() + 24 * 3600000), //experies in 24hrs
+    });
+
+    // send welocome email to user
+    await run({
+      toEmailId: userSaved.emailId,
+      subject: "Welcome to PairUpDev 🚀",
+      htmlBody: `
+    <div style="font-family: Arial;">
+      <h1>Welcome to PairUpDev!</h1>
+
+      <p>Hi ${userSaved.firstName},</p>
+
+      <p>
+        Thank you for joining PairUpDev.
+        Connect with developers, build projects,
+        and grow your network.
+      </p>
+
+      <p>
+        Complete your profile to increase your
+        chances of finding collaborators.
+      </p>
+
+      <h3>What's next?</h3>
+
+      <ul>
+        <li>Upload your profile picture</li>
+        <li>Add your skills</li>
+        <li>Discover developers</li>
+        <li>Send connection requests</li>
+      </ul>
+
+      <p>Happy coding! 🚀</p>
+
+      <p>Team PairUpDev</p>
+    </div>
+  `,
+      textBody: "Welcome to PairUpDev!",
     });
 
     //do not sending hashed password to console
