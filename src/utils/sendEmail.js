@@ -7,6 +7,10 @@ const createSendEmailCommand = (toEmailId, subject, htmlBody, textBody) => {
       ToAddresses: [toEmailId],
     },
     Message: {
+       Subject: {
+        Charset: "UTF-8",
+        Data: subject,
+      },
       Body: {
         Html: {
           Charset: "UTF-8",
@@ -17,21 +21,17 @@ const createSendEmailCommand = (toEmailId, subject, htmlBody, textBody) => {
           Data: textBody,
         },
       },
-      Subject: {
-        Charset: "UTF-8",
-        Data: subject,
-      },
     },
-    Source:  process.env.AWS_SES_FROM_EMAIL,
+    Source: process.env.AWS_SES_FROM_EMAIL,
   });
 };
 
-const run = async (toEmailId, subject, htmlBody, textBody) => {
+const run = async ({toEmailId, subject, htmlBody, textBody}) => {
   const command = createSendEmailCommand(
     "allemkarthik@gmail.com",
     subject,
     htmlBody,
-    textBody
+    textBody,
   );
 
   try {

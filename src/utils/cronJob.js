@@ -2,8 +2,9 @@ const cron = require("node-cron");
 const { subDays, startOfDay, endOfDay } = require("date-fns");
 const ConnectionRequestModel = require("../models/connectionRequest");
 
-const sendEmail = require("./sendEmail");
-cron.schedule("0 8 * * *", async () => {
+const {run} = require("./sendEmail");
+const User = require("../models/user");
+cron.schedule("00 8 * * *", async () => {
   //send emails to all people who got requests the previous day
   try {
     // this will give yesterday
@@ -32,7 +33,7 @@ cron.schedule("0 8 * * *", async () => {
     for (const email of listOfEmail) {
       //send emails
       try {
-        const res = await sendEmail.run({
+        const res = await run({
           toEmailId: email,
           subject: "New Connection Requests on PairUpDev",
           htmlBody: `
@@ -41,7 +42,9 @@ cron.schedule("0 8 * * *", async () => {
             <p>Log in to your account to review them.</p>
           `,
           textBody: "You have pending connection requests on PairUpDev.",
+          
         });
+        
       } catch (err) {
         err.message
       }
@@ -50,3 +53,4 @@ cron.schedule("0 8 * * *", async () => {
     console.error("Cron Job Error:", err);
   }
 });
+
