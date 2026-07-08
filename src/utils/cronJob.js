@@ -54,7 +54,7 @@ cron.schedule("00 8 * * *", async () => {
   }
 });
 
-//job sending email for birthday
+//job for sending email for birthday
 
 cron.schedule("00 9 * * *", async()=>{
   try{
@@ -97,7 +97,6 @@ cron.schedule("00 9 * * *", async()=>{
           `Happy Birthday ${user.firstName}! Wishing you a great year ahead.`
         );
 
-        console.log(`Birthday email sent to ${user.emailId}`);
       } catch (err) {
         console.error("Email send failed:", err.message);
       }

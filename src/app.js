@@ -26,12 +26,14 @@ app.use(cookieParser());
 const authRouter=require("./routes/auth");
 const profileRouter=require("./routes/profile");
 const sendConnectionRequest=require("./routes/requests");
-const userRouter=require("./routes/user")
+const userRouter=require("./routes/user");
+const paymentRouter = require("./routes/payment");
 
 app.use("/",authRouter)
 app.use("/",profileRouter)
 app.use("/",sendConnectionRequest)
 app.use("/", userRouter)
+app.use("/", paymentRouter)
 
 
 connectDB()
