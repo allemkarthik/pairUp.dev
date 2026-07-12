@@ -51,6 +51,15 @@ const userSchema = new mongoose.Schema(
         }
       },
     },
+    isPremium: {
+      type: Boolean,
+      default: false,
+    },
+    membershipType:{
+      type: String,
+
+    },
+    
     photoUrl: {
       type: String,
 
