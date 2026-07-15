@@ -10,6 +10,7 @@ const User = require("../models/user");
 
 const paymentRouter = express.Router();
 
+
 //api for create order in razorpay
 
 paymentRouter.post("/payment/create", userAuth, async (req, res) => {
@@ -59,7 +60,7 @@ paymentRouter.post("/payment/create", userAuth, async (req, res) => {
 //webhook for payment captured and payment is failed
 paymentRouter.post("/payment/webhook", async (req, res) => {
   try {
-    const webhookSignature = req.get["X-Razorpay-Signature"];
+    const webhookSignature = req.get("X-Razorpay-Signature");
 
     const isWebhookValid = validateWebhookSignature(
       JSON.stringify(req.body),
@@ -100,4 +101,14 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     return res.status(500).json({ msg: err.message });
   }
 });
+
+
+//update UI for payment captured users 
+paymentRouter.get("premium/verify", userAuth, async (req, res)=>{
+    const user=req.user.toJSON();
+    if(user.isPremium){
+        return res.json({isPremium: true});
+    }
+    return res.json({isPremium: false});
+})
 module.exports = paymentRouter;
