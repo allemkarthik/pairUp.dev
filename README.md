@@ -1,91 +1,212 @@
-# PairUp.dev Backend
+# 🚀 PairUp.dev Backend
 
-Backend API for **PairUp.dev**, a developer networking platform inspired by modern matching applications. The backend provides authentication, profile management, connection requests, developer discovery, and secure user interactions.
-
----
-
-## 🚀 Features
-
-* User Authentication (JWT + Cookies)
-* User Registration & Login
-* Profile Management
-* Developer Feed API
-* Send/Accept/Reject Connection Requests
-* View Connections
-* View Pending Requests
-* Pagination Support
-* Secure Protected Routes
-* Password Hashing using bcrypt
-* MongoDB Database Integration
+Backend API for **PairUp.dev**, a full-stack developer networking platform that helps developers connect, chat, and build professional relationships. Inspired by modern networking applications, PairUp.dev includes secure authentication, developer discovery, real-time messaging, premium memberships, automated email notifications, and scalable backend architecture.
 
 ---
 
-## 🛠 Tech Stack
+# ✨ Features
 
-* Node.js
-* Express.js
-* MongoDB
-* Mongoose
-* JWT Authentication
-* bcrypt
-* Cookie Parser
-* CORS
+## 👤 Authentication & User Management
+- JWT Authentication using HTTP-only Cookies
+- User Registration & Login
+- Secure Password Hashing with bcrypt
+- Protected API Routes
+- Profile Management
+- Cloudinary Profile Image Uploads
+- Date of Birth Support for Birthday Notifications
 
 ---
 
-## 📁 Project Structure
+## 🤝 Networking Features
 
-```
+- Developer Feed with Pagination
+- Send Connection Requests
+- Accept / Reject Requests
+- View Pending Requests
+- View Accepted Connections
+- Prevent Duplicate Requests
+- Mutual Connection Validation
+
+---
+
+## 💬 Real-Time Chat
+
+- Socket.IO powered real-time messaging
+- Private one-to-one chat rooms
+- Persistent chat history stored in MongoDB
+- Connection validation before allowing chat
+- Automatic room generation using user IDs
+
+---
+
+## 💳 Premium Membership
+
+- Razorpay Payment Gateway Integration
+- Premium Membership Purchase
+- Premium Pro Membership
+- Payment Verification
+- Payment Records Stored in MongoDB
+- Secure Signature Verification using Razorpay Webhooks
+
+---
+
+## 📧 Email Automation
+
+AWS SES Integration
+
+Automated emails for:
+
+- Welcome Emails
+- Pending Connection Reminder Emails
+- Birthday Wishes
+- Future Marketing Emails
+
+Cron Jobs powered by **node-cron**
+
+---
+
+## 🎂 Birthday System
+
+- Stores user's Date of Birth
+- Daily Cron Job
+- Automatically wishes users on their birthday using AWS SES
+
+---
+
+## 🔒 Security
+
+- JWT Authentication
+- HTTP-only Cookies
+- Password Hashing (bcrypt)
+- Request Validation
+- Protected APIs
+- CORS Configuration
+- MongoDB Injection Protection
+- Environment Variables
+
+---
+
+# 🛠 Tech Stack
+
+## Backend
+
+- Node.js
+- Express.js
+- MongoDB
+- Mongoose
+
+## Authentication
+
+- JWT
+- bcrypt
+- Cookie Parser
+
+## Real-time
+
+- Socket.IO
+
+## Payments
+
+- Razorpay
+
+## Cloud
+
+- AWS EC2
+- AWS SES
+- Nginx
+
+## Storage
+
+- Cloudinary
+
+## Scheduling
+
+- node-cron
+
+---
+
+# 📁 Project Structure
+
+```text
 src/
 │
 ├── config/
-├── middlewares/
+├── middleware/
 ├── models/
 ├── routes/
 ├── utils/
+├── cronJobs/
+├── socket/
 ├── app.js
 └── database.js
 ```
 
 ---
 
-## ⚙️ Environment Variables
+# ⚙️ Environment Variables
 
-Create a `.env` file in the root directory.
+Create a `.env` file.
 
 ```env
-PORT=7777
+PORT=3000
 
-MONGO_URI=your_mongodb_connection_string
+MONGO_URI=
 
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=
 
-CLIENT_URL=http://localhost:5173
+CLIENT_URL=
+
+COOKIE_DOMAIN=
+
+####################################
+# Cloudinary
+####################################
+
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+
+####################################
+# AWS SES
+####################################
+
+AWS_ACCESS_KEY_ID=
+AWS_SECRET_ACCESS_KEY=
+AWS_REGION=
+AWS_SES_FROM_EMAIL=
+
+####################################
+# Razorpay
+####################################
+
+RAZORPAY_KEY_ID=
+RAZORPAY_KEY_SECRET=
+WEBHOOK_SECRET=
 ```
 
 ---
 
-## 📦 Installation
+# 📦 Installation
 
-Clone the repository:
+Clone repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/yourusername/pairupdev-backend.git
 ```
 
-Install dependencies:
+Install dependencies
 
 ```bash
 npm install
 ```
 
-Run the development server:
+Run development server
 
 ```bash
 npm run dev
 ```
 
-Start production server:
+Production
 
 ```bash
 npm start
@@ -93,50 +214,43 @@ npm start
 
 ---
 
-## 🔐 Authentication APIs
+# 🔑 Authentication APIs
 
-| Method | Endpoint | Description   |
-| ------ | -------- | ------------- |
-| POST   | /signup  | Register user |
-| POST   | /login   | Login user    |
-| POST   | /logout  | Logout user   |
-
----
-
-## 👤 Profile APIs
-
-| Method | Endpoint      | Description    |
-| ------ | ------------- | -------------- |
-| GET    | /profile/view | Get profile    |
-| PATCH  | /profile/edit | Update profile |
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | /signup | Register User |
+| POST | /login | Login |
+| POST | /logout | Logout |
 
 ---
 
-## 🤝 Connection APIs
+# 👤 Profile APIs
 
-| Method | Endpoint                | Description              |
-| ------ | ----------------------- | ------------------------ |
-| POST   | /request/send//         | Send request             |
-| POST   | /request/review//       | Accept or reject request |
-| GET    | /user/requests/received | Received requests        |
-| GET    | /user/connections       | User connections         |
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | /profile/view | Get Profile |
+| PATCH | /profile/edit | Edit Profile |
 
 ---
 
-## 🔍 Feed API
+# 🤝 Connection APIs
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | /request/send/:status/:userId | Send Connection Request |
+| POST | /request/review/:status/:requestId | Accept / Reject Request |
+| GET | /user/requests/received | Pending Requests |
+| GET | /user/connections | Connections |
+
+---
+
+# 🌐 Feed API
 
 ```http
 GET /feed?page=1&limit=10
 ```
 
-### Query Parameters
-
-| Parameter | Description              |
-| --------- | ------------------------ |
-| page      | Page number              |
-| limit     | Number of users per page |
-
-Example:
+Example
 
 ```http
 GET /feed?page=2&limit=10
@@ -144,39 +258,91 @@ GET /feed?page=2&limit=10
 
 ---
 
-## 🔒 Security Features
+# 💬 Chat APIs
 
-* JWT Authentication
-* HTTP Only Cookies
-* Password Hashing
-* Protected Routes
-* Request Validation
-* CORS Configuration
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | /chat/:targetUserId | Fetch Chat History |
 
----
-
-## 🌐 Frontend Repository
-
-The frontend application is built using React, Redux Toolkit, Tailwind CSS, and DaisyUI.
+Real-time communication is handled using **Socket.IO** events.
 
 ---
 
-## 🚀 Future Enhancements
+# 💳 Payment APIs
 
-* Real-time Chat
-* Socket.io Notifications
-* Swipe-based Matching
-* Push Notifications
-* AI Developer Recommendations
-* Developer Compatibility Scoring
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | /payment/create | Create Razorpay Order |
+| POST | /payment/webhook | Verify Razorpay Payment |
+| GET | /premium/verify | Check Premium Status |
 
 ---
 
-## 👨‍💻 Author
+# 📧 Scheduled Jobs
 
-**Allem Sai Karthik**
+### Daily Birthday Emails
 
-Master's in Computer Science
-Saint Francis College, New York
+Runs every morning to send birthday wishes.
 
-##
+### Pending Connection Reminder
+
+Automatically reminds users about pending connection requests.
+
+Future scheduled jobs include:
+
+- Weekly Activity Reports
+- Monthly Developer Digest
+- Premium Expiration Reminder
+
+---
+
+# 🚀 Deployment
+
+Backend deployed on:
+
+- AWS EC2
+- Nginx Reverse Proxy
+- MongoDB Atlas
+- AWS SES
+- Cloudinary
+
+---
+
+# 🔒 Security Features
+
+- JWT Authentication
+- HTTP-only Cookies
+- bcrypt Password Hashing
+- Secure Environment Variables
+- CORS Protection
+- Input Validation
+- Protected Routes
+- Payment Signature Verification
+
+---
+
+# 🚀 Future Roadmap
+
+- AI Developer Recommendations
+- Developer Compatibility Score
+- Group Chats
+- Typing Indicators
+- Read Receipts
+- Online/Offline Presence
+- Push Notifications
+- Video Calling
+- Resume Parsing
+- AI Icebreaker Messages
+
+---
+
+# 👨‍💻 Author
+
+**Sai Karthik Allem**
+
+Master's in Computer Science  
+St. Francis, NewYork
+
+🔗 LinkedIn: www.linkedin.com/in/karthik-allem
+
+🌐 PairUp.dev
